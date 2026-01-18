@@ -66,7 +66,7 @@ const DataGrid = ({ columns, data,pageNumber}) => {
                 {isExpanded && (
                     <tr>
                         <td colSpan={columns.length + 1} className="p-2 border">
-                        <ExamSchedule formationYearId={row['formation_year_id']} totalGroups={row['total_groups']} isCanControlData={isCanControlData}/>
+                        <ExamSchedule formationYearId={row['formation_year_id']} totalGroups={row['total_groups']}/>
                         {/* <Card /> */}
                         </td>
                     </tr>
