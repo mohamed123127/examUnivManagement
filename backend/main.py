@@ -28,7 +28,7 @@ planner: ExamPlanner = ExamPlanner(fake_db)
 origins = [
     "http://localhost:3000",  # frontend
     "http://127.0.0.1:3000",
-    "https://examunivmanagement.onrender.com"
+    "https://exam-univ-management-r94ca0msg-louahchi-mohameds-projects.vercel.app"
 ]
 
 #solve issue of CORS
