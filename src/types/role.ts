@@ -1,0 +1,1 @@
+export type Role = "Doyen" | "Vice-doyen" | "Administrateur examens" | "Chef de département" | "Étudiant" | "Professeur";
