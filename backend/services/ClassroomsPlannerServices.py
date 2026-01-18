@@ -35,7 +35,6 @@ class ClassroomsPlanner:
 
         self.availableClassrooms[Date] = {}
 
-        # 🔥 LOOP OVER ALL TIMES (not only exam times)
         for exam_time in self.examsTimes:
 
             reserved_ids = set(
@@ -77,7 +76,7 @@ class ClassroomsPlanner:
                 VALUES (:id, :exam_id, :classroom_id, :group_id, :part)
             """)
 
-            # iterate over rows like saveExamsInDb
+            # save classrooms in Db
             for _, session in self.new_exam_sessions.iterrows():
 
                 db.execute(query, {
@@ -100,18 +99,13 @@ class ClassroomsPlanner:
 
 
     def reserveClassrooms(self,exam_id, module_id, Date, Time):
-        #problem we can resolved after:
         # print("         Start classrooms reservation...")
-
-        # 1️⃣ Ensure availability loaded
+        #Load dictinary
         if Date not in self.availableClassrooms:
             self.loadClassroomsForDate(Date)
         df = self.availableClassrooms[Date][Time]
-        # print(df)
-        # 3️⃣ Get exam id
-        # exam_id = self.exams_df[self.exams_df['module_id']==module_id]['id'].iloc[0]
 
-        # 2️⃣ Get groups concerned by the module
+        # Get groups concerned by the module
         groupsIds = list(self.getGroupsFromModuleId(module_id))
         #reserved modules classrooms
         already_reserved_groups = self.exam_sessions_df[
@@ -122,10 +116,10 @@ class ClassroomsPlanner:
 
 
         reservations = []
-        # 4️⃣ Loop over groups
+        # Loop over groups
         for group_id in groupsIds:
             # print(f"!! {group_id} !!")
-            # Take first available classroom (already sorted by capacity desc)
+            # Take first available classroom
             available = df[df['isAvailable'] == True]
 
             if available.empty:
@@ -136,7 +130,7 @@ class ClassroomsPlanner:
             classroom_type = classroom['type']
 
             if classroom_type == "amphi":
-                # 5️⃣ Save reservation row
+                # Save reservation row
                 session_id = str(exam_id) + "_" + str(group_id)
                 reservations.append({
                     "id": session_id,
@@ -146,12 +140,12 @@ class ClassroomsPlanner:
                     "part": None
                 })
 
-                # 6️⃣ Mark classroom as unavailable
+                # Mark classroom as unavailable
                 df.loc[df['classroom_id'] == classroom_id, 'isAvailable'] = False
                 # print("         reserved class for group ",group_id," is Amphi id ",classroom_id)
                 self.profsPlanner.reserveProfs(session_id,Date,Time,3)
             elif classroom_type == "class":
-                # 🔵 Need TWO classrooms
+                # Need TWO classrooms
                 if len(available) < 2:
                     raise Exception("❌ Not enough classrooms for class split")
 
@@ -188,7 +182,7 @@ class ClassroomsPlanner:
                 df.loc[df['classroom_id'] == classA['classroom_id'], 'isAvailable'] = False
                 df.loc[df['classroom_id'] == classB['classroom_id'], 'isAvailable'] = False
 
-            # 7️⃣ Reorder dataframe (True first again)
+            # Reorder dataframe (True first again)
             df.sort_values(
                 by=['isAvailable', 'capacity'],
                 ascending=[False, False],
@@ -196,7 +190,7 @@ class ClassroomsPlanner:
             )
             df.reset_index(drop=True, inplace=True)
 
-        # 8️⃣ Save back updated dataframe
+        # Save back updated dataframe
         self.availableClassrooms[Date][Time] = df
         new_sessions_df = pd.DataFrame(reservations)
 
@@ -204,9 +198,6 @@ class ClassroomsPlanner:
             [self.new_exam_sessions, new_sessions_df],
             ignore_index=True
         )
-        # self.new_exam_sessions.append(pd.DataFrame(reservations))
         # print("         finish classrooms reservation")
-
-        # 9️⃣ Return rows ready to insert
         return 
 

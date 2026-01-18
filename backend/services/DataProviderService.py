@@ -25,21 +25,26 @@ def getAllFormationYearsData(
 ):
 
     base_query = (
-        db.query(
-            FormationYear.id.label("formation_year_id"),
-            Formation.name.label("formation_name"),
-            FormationYear.year.label("formation_year"),
-            func.count(distinct(Group.id)).label("total_groups"),
-            func.count(distinct(FormationYearModule.module_id)).label("total_modules"),
-            Department.name.label("dept_name"),
-        )
-        .join(Formation, FormationYear.formation_id == Formation.id)
-        .join(Department, Formation.department_id == Department.id)
-        .join(Group, FormationYear.id == Group.formation_year_id)
-        .join(FormationYearModule, FormationYear.id == FormationYearModule.formation_year_id)
-        .group_by(FormationYear.id)
-        .order_by(Department.name.asc())  # <<< ORDER BY DEPARTMENT
+    db.query(
+        FormationYear.id.label("formation_year_id"),
+        Formation.name.label("formation_name"),
+        FormationYear.year.label("formation_year"),
+        func.count(distinct(Group.id)).label("total_groups"),
+        func.count(distinct(FormationYearModule.module_id)).label("total_modules"),
+        Department.name.label("dept_name")
     )
+    .join(Formation, FormationYear.formation_id == Formation.id)
+    .join(Department, Formation.department_id == Department.id)
+    .join(Group, FormationYear.id == Group.formation_year_id)
+    .join(FormationYearModule, FormationYear.id == FormationYearModule.formation_year_id)
+    .group_by(
+        FormationYear.id,
+        Formation.name,
+        FormationYear.year,
+        Department.name
+    )
+)
+
 
     if department_id is not None:
         base_query = base_query.filter(Department.id == department_id)

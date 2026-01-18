@@ -55,11 +55,7 @@ class ProfsPlanner:
 
         df = df.sort_values(by=['department_id', 'supervision_count'], ascending=[False, False])
         return df
-
-    def checkIsAvailableTime(self,Time):
-
-        return True
-    
+ 
     def saveExamProfsSupervisionsInDb(self):
         if self.new_exam_profs_supervisions.empty:
             # print("\nNo professor supervisions to save.")
@@ -92,14 +88,14 @@ class ProfsPlanner:
     
         # print(f"              Start prof reservation for exam session id : {examSessionId}")
 
-        # 1️⃣ Load date if not exists
+        # Load date if not exists
         if Date not in self.ProfessorsSupervisionSchedule or Date not in self.ProfessorsSupervisionAvailability:
             self.loadDictionaryForDate(Date)
         # print(f"\n\n{self.ProfessorsSupervisionAvailability}\n\n")
         # print(f"\n\n{self.ProfessorsSupervisionSchedule}\n\n")
         df_avail = self.ProfessorsSupervisionAvailability[Date]
         df_schedule = self.ProfessorsSupervisionSchedule[Date]
-        # 2️⃣ Filter professors who still have slots AND are free at this exact Time
+        #  Filter professors who still have slots AND are free at this exact Time
         available_profs = df_avail[
             (df_avail['supervision_count'] > 0) &
             (~df_avail['professor_id'].isin(
@@ -107,14 +103,14 @@ class ProfsPlanner:
             ))
         ]
         # print("avalable profd are",available_profs)
-        # 3️⃣ Pick the first `num_profs`
+        # Pick the first `num_profs`
         selected = available_profs.head(num_profs)
 
         if selected.empty:
             # print("No available professors for this time!")
             return pd.DataFrame()  # or handle differently
 
-        # 4️⃣ Update supervision_count and schedule
+        # Update supervision_count and schedule
         new_rows = []
         for idx in selected.index:
             # Decrease remaining slots
@@ -126,12 +122,6 @@ class ProfsPlanner:
                 'exam_date': Date,
                 'exam_time': Time
             })
-
-            #save profs for the db Table
-            # self.new_exam_profs_supervisions.append({
-            #     'exam_session_id': examSessionId,
-            #     'professor_id': df_avail.at[idx, 'professor_id']
-            # })
 
             self.new_exam_profs_supervisions = pd.concat([
                 self.new_exam_profs_supervisions,
@@ -148,7 +138,7 @@ class ProfsPlanner:
             ignore_index=True
         )
 
-        # 5️⃣ Re-sort availability: department_id=4 first, then remaining slots descending
+        # Re-sort availability: department_id, then remaining slots descending
         df_avail.sort_values(by=['department_id', 'supervision_count'], ascending=[False, False], inplace=True)
 
         # print("Updated availability:\n", df_avail)

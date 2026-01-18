@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from models.notification import Notification
 
-# Insert notification
 def create_notification(message: str, type: str | None, db: Session):
     notification = Notification(
         message=message,
@@ -13,7 +12,6 @@ def create_notification(message: str, type: str | None, db: Session):
     return notification
 
 
-# Get all notifications
 def get_all_notifications(db: Session):
     notifications = (
         db.query(Notification)

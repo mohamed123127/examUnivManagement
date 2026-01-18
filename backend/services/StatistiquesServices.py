@@ -6,7 +6,6 @@ class StatsService:
 
     @staticmethod
     def get_general_stats(db: Session, department_id: int | None = None):
-        # Total students (فلترة حسب department_id إذا تم تمريره)
         total_students_query = db.query(func.count(Student.id))
         if department_id is not None:
             total_students_query = total_students_query.join(
@@ -23,7 +22,6 @@ class StatsService:
         # Total professors
         total_professors_query = db.query(func.count(Professor.id))
         if department_id is not None:
-            # إذا Professor مرتبط بـ Formation، نفعل join مشابه
             total_professors_query = total_professors_query.filter(
                 Professor.department_id == department_id
             )
@@ -98,10 +96,6 @@ class StatsService:
 
     @staticmethod
     def get_exams_stats(db: Session, department_id: int | None = None):
-
-        # =========================
-        # Base Exam Query (with joins)
-        # =========================
         exam_query = (
             db.query(Exam)
             .join(
@@ -123,23 +117,15 @@ class StatsService:
 
         exam_ids_subquery = exam_query.with_entities(Exam.id).subquery()
 
-        # =========================
-        # Total exams
-        # =========================
         total_exams = db.query(func.count()).select_from(exam_ids_subquery).scalar() or 0
 
-        # =========================
-        # Total exam sessions
-        # =========================
         total_exam_sessions = (
             db.query(func.count(ExamSession.id))
             .filter(ExamSession.exam_id.in_(exam_ids_subquery))
             .scalar() or 0
         )
 
-        # =========================
         # Occupied classrooms per day
-        # =========================
         used_classes = (
             db.query(func.count(ExamSession.classroom_id))
             .filter(ExamSession.exam_id.in_(exam_ids_subquery))
@@ -154,9 +140,7 @@ class StatsService:
 
         occupied_classrooms_per_day = used_classes / total_days
 
-        # =========================
         # Average sessions per professor
-        # =========================
         subquery = (
             db.query(
                 ExamSupervision.professor_id,

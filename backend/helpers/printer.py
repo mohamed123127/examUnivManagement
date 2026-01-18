@@ -3,16 +3,7 @@ from datetime import datetime, date, time, timedelta
 
 
 def jsonPrint(data, itemsNumber=None, indent=4):
-    """
-    Pretty print any dict/list as JSON.
-
-    Args:
-        data: dict or list to print
-        itemsNumber: optional number of items to print if data is a list
-        indent: number of spaces for indentation
-    """
     if isinstance(data, list) and itemsNumber is not None:
-        # Slice the list to print only first 'itemsNumber' items
         data_to_print = data[:itemsNumber]
     else:
         data_to_print = data
@@ -20,14 +11,6 @@ def jsonPrint(data, itemsNumber=None, indent=4):
     print(json.dumps(data_to_print, indent=indent, ensure_ascii=False))
 
 def Print(data, limit=None):
-    """
-    Pretty-print a list of dictionaries or a dictionary.
-    Automatically formats datetime.date and datetime.time objects.
-    
-    Args:
-        data (list/dict): The data to print.
-        limit (int, optional): Number of items to print if data is a list.
-    """
     def convert(obj):
         if isinstance(obj, date):
             return obj.strftime("%A,%Y-%m-%d")

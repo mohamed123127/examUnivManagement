@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy.orm import Session,joinedload
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, date, time
 from models.base import Base
 from models.department import Department
-from dbSetup import SessionLocal, engine , get_db
+from dbSetup import get_db
 from services.LoginService import login
 from services import StudentService,ProfService,DataProviderService
 from services.StatistiquesServices import StatsService
@@ -15,7 +15,7 @@ from models.formation import Formation
 from models.department import Department
 from sqlalchemy import distinct
 from fastapi import Query
-from services.dbServices import load_db_to_memory,get_next_auto_increment
+from services.dbServices import load_db_to_memory
 from services.ExamPlannerService import ExamPlanner
 from helpers.statistiquesCalculator import getStatistiques
 from services.NotificationService import create_notification,get_all_notifications
@@ -30,9 +30,10 @@ origins = [
     "http://127.0.0.1:3000"
 ]
 
+#solve issue of CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,   # أو ["*"] للسماح لكل المواقع
+    allow_origins=origins, 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

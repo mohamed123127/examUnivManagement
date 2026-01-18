@@ -22,16 +22,17 @@ class ExamPlanner:
         self.professors_df = pd.DataFrame(db["professors"])
         self.classrooms_df = pd.DataFrame(db["classrooms"])
         
+        # init columns in exams
         self.exams_df = pd.DataFrame(db["exams"])
         if self.exams_df.empty:
             self.exams_df = pd.DataFrame(columns=["id", "module_id", "exam_date", "exam_time"])
 
-        # exam_sessions
+        # init columns in exam_sessions
         self.exam_sessions_df = pd.DataFrame(db["exam_sessions"])
         if self.exam_sessions_df.empty:
             self.exam_sessions_df = pd.DataFrame(columns=["id", "exam_id", "classroom_id","group_id","part"])
 
-        # exam_supervisions
+        # init columns in exam_supervisions
         self.exam_supervisions_df = pd.DataFrame(db["exam_supervisions"])
         if self.exam_supervisions_df.empty:
             self.exam_supervisions_df = pd.DataFrame(columns=["id", "exam_session_id", "professor_id"])
@@ -55,13 +56,7 @@ class ExamPlanner:
         # Planners
         self.profsPlanner = ProfsPlanner(self.exams_df,self.exam_sessions_df,self.exam_supervisions_df,self.professors_df)
         self.classroomsPlanner = ClassroomsPlanner(self.examsTimes,self.classrooms_df, self.exams_df, self.exam_sessions_df,self.formation_year_modules_df,self.groups_df,self.profsPlanner)
-
-
-        # print(self.calcMinumumModuleGroups())
         
-    # -------------------------
-    # Helpers
-    # -------------------------
     def calcMinumumModuleGroups(self):
         counts = self.groups_df.groupby("formation_year_id").size()
         min_count = counts.min()
@@ -95,15 +90,15 @@ class ExamPlanner:
     def loadDateTimeAvailabilities(self, Date):
         """
         For each exam time, compute how many groups can pass exams
-        based on classrooms + professors availability (REAL availability).
+        based on classrooms + professors availability
         """
 
         self.dateTimeAvailabilities.setdefault(Date, {})
 
-        # 1️⃣ Load classrooms availability for this date
+        # Load classrooms availability for this date
         if Date not in self.classroomsPlanner.availableClassrooms:
             self.classroomsPlanner.loadClassroomsForDate(Date)
-        # 2️⃣ Load professors availability & schedule for this date
+        # Load professors availability & schedule for this date
         if Date not in self.profsPlanner.ProfessorsSupervisionSchedule or Date not in self.profsPlanner.ProfessorsSupervisionAvailability:
             self.profsPlanner.loadDictionaryForDate(Date)
 
@@ -111,10 +106,6 @@ class ExamPlanner:
         df_day_schedule = self.profsPlanner.ProfessorsSupervisionSchedule[Date]
 
         for exam_time in self.examsTimes:
-
-            # ==============================
-            # 🏫 CLASSROOM CAPACITY
-            # ==============================
             df_rooms = self.classroomsPlanner.availableClassrooms[Date][exam_time]
 
             amphis = df_rooms[(df_rooms['isAvailable']) & (df_rooms['type'] == 'amphi')]
@@ -123,9 +114,6 @@ class ExamPlanner:
             num_amphis = len(amphis)
             num_class_pairs = len(classes) // 2
 
-            # ==============================
-            # 👨‍🏫 PROFESSOR REAL AVAILABILITY (TIME-AWARE)
-            # ==============================
             busy_profs = df_day_schedule[
                 df_day_schedule['exam_time'] == exam_time
             ]['prof_id']
@@ -135,28 +123,20 @@ class ExamPlanner:
                 (~df_day_avail['professor_id'].isin(busy_profs))
             ]
 
-            # num_available_profs = int(available_profs['supervision_count'].sum())
             num_available_profs = len(available_profs)
-            # print(num_available_profs)
 
-            # ==============================
-            # 📐 OPTIMAL GROUP COMPUTATION
-            # ==============================
             max_groups_by_profs = 0
 
-            # 1️⃣ Use amphis first (3 profs)
+            # Use amphis first (3 profs)
             usable_amphis = min(num_amphis, num_available_profs // 3)
             max_groups_by_profs += usable_amphis
             num_available_profs -= usable_amphis * 3
 
-            # 2️⃣ Then class pairs (4 profs)
+            # Then class pairs (4 profs)
             usable_class_groups = min(num_class_pairs, num_available_profs // 4)
             max_groups_by_profs += usable_class_groups
             num_available_profs -= usable_class_groups * 4
 
-            # ==============================
-            # ✅ FINAL CAPACITY FOR THIS TIME
-            # ==============================
             self.dateTimeAvailabilities[Date][exam_time] = max_groups_by_profs
 
         return self.dateTimeAvailabilities[Date]
@@ -167,25 +147,14 @@ class ExamPlanner:
         return groupsNumber
     
     def checkIsAvailableTime(self,Date,groupNeeded,Time=None):
-        ###returned False if is not time available for this date
-        ###else reruned the time
+        #returned False if is not time available for this date
+        #else reruned the time
         availableTimes = [T for T, capacity in self.dateTimeAvailabilities[Date].items() if capacity >= groupNeeded]
         if len(availableTimes) > 0:
             availableTime = availableTimes[0]
             if Time is not None and Time in availableTimes: return Time
             return availableTime
         return False
-        
-        #new dictenery have date and time and tell how much classes and profs are available 
-        #function calc is available by number of classes and profs are available with total group in this module
-        #check and reserve direcly
-        #flag to sing is this date or time availble or not to select for var i should start
-        #for classes we have a var that contain last module who have minimal groups. if the classes for
-          #this time is less then this var the flag of avaibility for this time is closed
-        # if self.profsPlanner.checkIsAvailableTime(Time):
-        #             return True
-        
-        return True
 
     def getNextExamId(self):
         self.next_exam_Id = self.next_exam_Id + 1
@@ -206,26 +175,25 @@ class ExamPlanner:
             ]
 
             if conflictInDate.empty:
-                # لا يوجد تعارض → تحقق من توفر الوقت
+                # if no conflit then check is available time
                 self.loadDateTimeAvailabilities(Date)
                 availableTime = self.checkIsAvailableTime(Date, groupsNeeded, Time)
                 if availableTime:
-                    # وجدنا تاريخ ووقت صالح
+                    #return date and time available
                     return Date, availableTime
-                # لا يوجد وقت متاح في هذا اليوم → ننتقل إلى اليوم التالي
+                #next day
                 Date += timedelta(days=1)
             else:
-                # يوجد تعارض → حدد اليوم التالي بعد التعارض
+                #we have conflite , let's select how much day we need after the conflit day
                 nearest_conflict_date = conflictInDate['exam_date'].min()
                 daysPlus = (nearest_conflict_date - Date).days + self.minDaysBetweenExams + 1
                 Date = self.nextAvailableDay(Date, daysPlus)
 
-        # إذا تجاوزنا آخر يوم → نهاية فترة الامتحانات
+        #if we pass last exam date
         print(f"❌ Exams period ended. No available time for {groupsNeeded} groups.")
         return False
 
     def saveExamsInDb(self):
-        # print(f"\n\n{self.newExams}\n\n")
         if self.newExams.empty:
             print("\nNo new exams to save.")
             return
@@ -234,8 +202,7 @@ class ExamPlanner:
                 INSERT INTO exams (id,module_id, exam_date, exam_time)
                 VALUES (:id,:module_id, :exam_date, :exam_time)
             """)
-            for _, exam in self.newExams.iterrows():  # <- صححنا هنا
-                # print(f"print test here {exam}")
+            for _, exam in self.newExams.iterrows():
                 db.execute(query, {
                     "id": int(exam["id"]),
                     "module_id": int(exam["module_id"]),
@@ -256,9 +223,6 @@ class ExamPlanner:
         self.profsPlanner.saveExamProfsSupervisionsInDb()
         return
 
-    # -------------------------
-    # Formation Year Reservation
-    # -------------------------
     def formationYearReservation(self, formationYearId):
         # print("start reservation for formation year id : ",formationYearId)
         self.currentFormationYear = self.currentFormationYear +1
@@ -291,8 +255,7 @@ class ExamPlanner:
                 continue
             else:
                 nextModuleExamDate, nextModuleExamTime = result
-            # print("!!",nextModuleExamDate,nextModuleExamTime)
-            # Schedule exam
+
             nextExamId = self.getNextExamId()
 
             new_exam = pd.DataFrame([{
@@ -317,21 +280,14 @@ class ExamPlanner:
         
         # print("finish reservation for formation year id : ",formationYearId)
 
-    # -------------------------
-    # Start Planification
-    # -------------------------
     def startPlanification(self):
         self.next_exam_Id = get_next_auto_increment("exams")
-        #Real start
-        start_time = timer.time()  # start timer
+        #set a time
+        start_time = timer.time()
 
         for i in range(len(self.formation_years_df)):
             self.formationYearReservation(i)
-        # self.classroomsPlanner.reserveClassrooms(46,2,date(2025, 12, 24),time(8, 30))
-        # print(self.classroomsPlanner.new_exam_sessions)
-        # print(self.newExams)
-        # print(self.profsPlanner.new_exam_profs_supervisions)
-        # print(self.newExams)
+            
         self.saveReservationsInDb()
         print("\n\nissues:")
         jsonPrint(self.unreservedModules)

@@ -16,6 +16,8 @@ MAX_MODULES = 9
 AVG_GROUP_SIZE_MIN = 38
 AVG_GROUP_SIZE_MAX = 44
 NUM_PROFESSORS = 400
+num_amphi = 75
+num_class = 60
 
 
 def sql_str(s):
@@ -37,7 +39,7 @@ def seed_database():
 
     # ---------- ROLES ----------
     insert_sql.append(
-        "INSERT INTO roles (id,name) VALUES (1,'student'),(2,'professor'),(3,'admin');"
+        "INSERT INTO roles (id,name) VALUES (1, 'Étudiant'),(2, 'Professeur'),(3, 'Administrateur examens'),(4, 'Chef de département'),(5, 'Doyen'),(6, 'Vice-doyen');"
     )
 
     # ---------- DEPARTMENTS ----------
@@ -101,8 +103,6 @@ def seed_database():
             group_id += 1
 
     # ---------- CLASSROOMS ----------
-    num_amphi = 75
-    num_class = 60
 
     for i in range(num_amphi):
         d = random.choice(dept_ids)
@@ -166,6 +166,12 @@ def seed_database():
 
         user_id += 1
         prof_id += 1
+
+    # ---------- ADMINSTRATION ----------
+
+    insert_sql.append(
+        "INSERT INTO `administration` (`id`, `matricule`, `first_name`, `last_name`, `department_id`) VALUES(4, 'CDI111022', 'Youcef', 'Yahyatain', 1),(6, 'PLE294771', 'Zayed', 'Mekdad', 1),(7, 'D12784633', 'abdellah', 'lmohsen', NULL),(8, 'VD6482512', 'jaafar', 'khadour', NULL);"
+    )
 
     # ---------- EXECUTE IN DATABASE ----------
     session: Session = SessionLocal()
