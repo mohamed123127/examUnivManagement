@@ -1,9 +1,10 @@
 'use client'
 
-import DataGrid, { Column } from '@/src/components/DataGrid/DataGrid'
+import DataGrid from '@/src/components/DataGrid/DataGrid'
 import React, { useEffect, useState } from 'react'
 import SearchArea from '../../examsManagerPortal/examPlanification/SearchArea';
 import { API_BASE_URL } from '@/src/settings';
+import { Column } from '../../deptManagerPortal/examPlanification/page';
 
 export type FormationYear = {
   formation_year_id: number;

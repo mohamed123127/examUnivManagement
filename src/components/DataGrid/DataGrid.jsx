@@ -5,7 +5,7 @@ import Card from "../planification/Card";
 import { FormationYear } from "@/src/app/(home)/examsManagerPortal/examPlanification/page";
 
 const DataGrid = ({ columns, data,pageNumber}) => {
-  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
   const toggleRow = (index) => {
     const newSet = new Set(expandedRows);

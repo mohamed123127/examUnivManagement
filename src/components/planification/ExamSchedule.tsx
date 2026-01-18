@@ -41,11 +41,6 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
   };
   const supervisors = ['s1','s2','s1','s2']
   const [Exams,setExams] = useState<Exam[] | null>([])
-  const AddExamHandled = ()=>{
-
-    setExams(prev => (prev ? [...prev, examForm] : [examForm]));
-    setIsFormOpned(false);
-  }
   const [selectedTime,setSelectedTime] = useState('')
 
   const [examForm, setExamForm] = useState<ExamForm>({
@@ -55,12 +50,6 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
   time: selectedTime,
   supervisions: []
 });
-
-  const deleteExamHandler = (date: Date, time: string) => {
-  setExams(prev =>
-    prev.filter(e => !(dayjs(e.date).isSame(date) && e.time === time))
-  );
-};
 
   const [notReservedModules,setNotReservedModules] = useState<IdNameType[]>([]);
   const [modules,setModules] = useState<IdNameType[]>([]);
@@ -108,7 +97,6 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
 
   return (
     <div className="flex justify-center">
-      {!isFormOpned ?
       <table className="h-full border-collapse text-center">
         <thead>
           <tr>
@@ -166,7 +154,6 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
                         Suppervisiors={selectedExam.total_profs}
                         date={selectedExam.date}
                         time={time}
-                        DeleteAction={(date, time) => deleteExamHandler(date, time)}
                         isCanControlData={isCanControlData}
                         />
                         </div>
@@ -179,89 +166,6 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
           ))}
         </tbody>
       </table>
-      :
-      <div
-  className="absolute inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
-  onClick={() => setIsFormOpned(false)}
->
-  <div
-    className="flex flex-col justify-between bg-white rounded-lg p-4 shadow-lg overflow-auto w-1/4 h-auto"
-    onClick={(e) => e.stopPropagation()}
-  >
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-2xl font-bold">Ajouter un nouvel examen</h2>
-      <button onClick={() => setIsFormOpned(false)}>
-        <HiX className="text-red-600 font-bold text-3xl" />
-      </button>
-    </div>
-
-    <div className="space-y-4">
-
-      {/* Module dropdown */}
-      <div>
-        <label className="font-semibold text-lg">Module</label>
-        <select
-          className="border p-2 w-full"
-          onChange={(e) =>
-            setExamForm(prev => ({
-              ...prev,
-              module: e.target.value
-            }))
-          }
-        >
-          <option value="">Choisir un module</option>
-          {notReservedModules?.map((module, i) => (
-            <option key={i} value={module.id}>
-              {module.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <p className="text-red-600 font-light">
-          – vous devez sélectionner salles des examen et surveillants pour {totalGroups} group
-      </p>
-      {/* Classroom */}
-      <div>
-        <label className="font-semibold text-lg">Salles</label>
-        <MultiSelectDropDownMenu
-  label="Select classrooms"
-  options={classrooms}
-  setSelectedItems={(newSelected: number[]) => {     
-    setExamForm(prev => ({
-      ...prev,
-      classroom: newSelected
-    }))
-  }}
-/>
-      </div>
-
-      {/* Supervisors */}
-      <div>
-        <label className="font-semibold text-lg">Surveillants</label>
-        <MultiSelectDropDownMenu
-    label="sélectionné des surveillants"
-    options={supervisions}
-    setSelectedItems={(newSelected: number[]) => {     
-      setExamForm(prev => ({
-        ...prev,
-        supervisions: newSelected
-      }))
-    }}
-  />
-      </div>
-
-    </div>
-
-    <button
-      onClick={AddExamHandled}
-      className="bg-green-700 p-2 rounded-md text-white mt-2"
-    >
-      Créer l’examen
-    </button>
-  </div>
-</div>
-
-}
     </div>
   );
 };
