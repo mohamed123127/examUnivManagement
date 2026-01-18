@@ -2,8 +2,10 @@
 
 import { SplitCircleStatCard } from '@/src/components/statistiques/SplitCircleStatCard'
 import { StatCard } from '@/src/components/statistiques/StatCard'
+import { API_BASE_URL } from '@/src/settings'
 import { PieChart } from '@mui/x-charts'
 import React, { useEffect, useState } from 'react'
+import { TableRow } from '../../deptManagerPortal/statistiques/page'
 
 const Page = () => {
   const [generaleStats,setGeneraleStats] = useState({
@@ -12,13 +14,13 @@ const Page = () => {
       'sallesPerDay': '0',
       'avgSessionsPerProf': '0'
   })
-  const [tableData,setTableData] = useState([]);
+  const [tableData,setTableData] = useState<TableRow[]>([]);
   const [examPerDept, setExamPerDept] = useState<Array<{ department_id: number, examPerDept: number }>>([]);
 
   useEffect(() => {
     const fetchGeneralStats = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/exams-stats");
+        const res = await fetch(`${API_BASE_URL}/exams-stats`);
         const data = await res.json();
 
         setGeneraleStats({
@@ -35,7 +37,7 @@ const Page = () => {
 
     const fetchStudentGroups = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/most-used-hours");
+        const res = await fetch(`${API_BASE_URL}/most-used-hours`);
         const data = await res.json();
         setTableData(data);
       } catch (error) {
@@ -45,7 +47,7 @@ const Page = () => {
 
     const fetchExamPerDept = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/exam-per-department");
+        const res = await fetch(`${API_BASE_URL}/exam-per-department`);
         const data = await res.json();
         setExamPerDept(data);
         console.log(data)

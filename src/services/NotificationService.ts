@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "../settings";
+
 interface CreateNotificationPayload {
   message: string;
   type?: string;
@@ -6,7 +8,7 @@ interface CreateNotificationPayload {
 export const createNotification = async (
   payload: CreateNotificationPayload
 ) => {
-  const res = await fetch("http://127.0.0.1:8000/notification", {
+  const res = await fetch(`${API_BASE_URL}/notification`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +24,7 @@ export const createNotification = async (
 };
 
 export const fetchNotifications = async () => {
-  const res = await fetch("http://127.0.0.1:8000/notification", {
+  const res = await fetch(`${API_BASE_URL}/notification`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

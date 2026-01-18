@@ -3,6 +3,7 @@
 import DataGrid, { Column } from '@/src/components/DataGrid/DataGrid'
 import React, { useEffect, useState } from 'react'
 import SearchArea from '../../examsManagerPortal/examPlanification/SearchArea';
+import { API_BASE_URL } from '@/src/settings';
 
 export type FormationYear = {
   formation_year_id: number;
@@ -48,7 +49,7 @@ const Page = () => {
   }
 
   const query = params.toString();
-  const url = `http://127.0.0.1:8000/FormationYear/${currentPage}${query ? `?${query}` : ""}`;
+  const url = `${API_BASE_URL}/FormationYear/${currentPage}${query ? `?${query}` : ""}`;
 
   fetch(url)
     .then((res) => res.json())

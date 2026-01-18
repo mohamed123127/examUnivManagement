@@ -3,21 +3,16 @@ import { createNotification } from '@/src/services/NotificationService';
 import { KeyValue } from '@/src/types/exam'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from "@/src/context/AuthContext";
-
-
-interface Item {
-  id: number;
-  name: string;
-}
+import { API_BASE_URL } from '@/src/settings';
 
 const SearchArea = ({setFilter,isCanControlData=false,isItChefDept=false}) => {
-    const [depts,setDepts] = useState<Item[]>()
-    const [formations,setFormations] = useState<Item[]>()
+    const [depts,setDepts] = useState()
+    const [formations,setFormations] = useState()
     const [years,setYears] = useState()
     const { user } = useAuth();
 
-    async function fetchData(endpoint: string): Promise<Item[]> {
-    const res = await fetch(`http://127.0.0.1:8000/${endpoint}`);
+    async function fetchData() {
+    const res = await fetch(`${API_BASE_URL}/${endpoint}`);
     if (!res.ok) throw new Error("Failed to fetch " + endpoint);
     return res.json();
     }

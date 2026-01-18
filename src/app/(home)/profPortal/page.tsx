@@ -1,9 +1,9 @@
 "use client";
 
 import React, { use, useEffect, useState } from "react";
-import { Exam } from "../../../types/exam";
 import { User } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/src/settings";
 
 
 const examTimes = {
@@ -12,6 +12,13 @@ const examTimes = {
   "12:00:00":"12:00", 
   "13:45:00":"13:45", 
   "15:30:00":"15:30"
+};
+
+type Exam = {
+  date: Date;
+  time: string;
+  classroom: string;
+  module_name: string;
 };
 
 const Page = () => {
@@ -28,7 +35,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/profs/"+user?.id+"/ExamsSchedule")
+    fetch(`${API_BASE_URL}/profs/`+user?.id+"/ExamsSchedule")
       .then((res) => res.json())
       .then((data: Exam[]) => {setExams(data);})
       .finally(() => setLoading(false));
@@ -41,12 +48,10 @@ const Page = () => {
   const dates = Array.from(new Set(exams.map((e) => e.date))).sort();
 
   // Helper to find exam by date and time
-  const getExamAt = (date: string, time: string) =>
-    exams.find((e) =>e.date == date && e.time == time)
+  const getExamAt = (date: string, time: string): Exam | undefined =>
+    exams.find((e) =>e.date.toISOString().split('T')[0] == date && e.time == time)
 
-  const getFormatedDay = (date:string)=>{
-    const d = new Date(date);
-
+  const getFormatedDay = (d:Date)=>{
   const weekday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
   const dayMonthYear = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
@@ -67,7 +72,7 @@ const Page = () => {
             <tr className="bg-gray-200">
               <th className="border border-gray-300 px-4 py-2">Time</th>
               {dates.map((date) => (
-                <th key={date} className="border border-gray-300 px-4 py-2">
+                <th key={date.toISOString().split('T')[0]} className="border border-gray-300 px-4 py-2">
                   <>
                     { getFormatedDay(date)}
                   </>
@@ -80,7 +85,7 @@ const Page = () => {
               <tr key={key}>
                 <td className="border border-gray-300 px-4 py-2 font-semibold">{examTimes[key as keyof typeof examTimes]}</td>
                 {dates.map((date) => {
-                  const exam = getExamAt(date, key);
+                  const exam = getExamAt(date.toISOString().split('T')[0], key);
                   return (
                     <td key={date + key} className="border border-gray-300 px-2 py-2">
                       {exam ? (

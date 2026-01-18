@@ -4,23 +4,10 @@ import ExamSchedule from "../planification/ExamSchedule";
 import Card from "../planification/Card";
 import { FormationYear } from "@/src/app/(home)/examsManagerPortal/examPlanification/page";
 
-export type Column = {
-  key: string;
-  header: string;
-  width?: number;
-};
-
-type DataGridProps = {
-  columns: Column[];
-  data: FormationYear[] | undefined;
-  pageNumber: number;
-  isCanControlData: boolean;
-};
-
-const DataGrid: React.FC<DataGridProps> = ({ columns, data,pageNumber,isCanControlData=false}) => {
+const DataGrid = ({ columns, data,pageNumber}) => {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
 
-  const toggleRow = (index: number) => {
+  const toggleRow = (index) => {
     const newSet = new Set(expandedRows);
     if (newSet.has(index)) {
       newSet.delete(index);

@@ -2,8 +2,10 @@
 
 import { SplitCircleStatCard } from '@/src/components/statistiques/SplitCircleStatCard'
 import { StatCard } from '@/src/components/statistiques/StatCard'
+import { API_BASE_URL } from '@/src/settings'
 import { PieChart } from '@mui/x-charts'
 import React, { useEffect, useState } from 'react'
+import { TableRow } from '../deptManagerPortal/page'
 
 const Page = () => {
   const [generaleStats,setGeneraleStats] = useState({
@@ -12,7 +14,7 @@ const Page = () => {
       'formations': '0',
       'modules': '0'
   })
-  const [tableData,setTableData] = useState([]);
+  const [tableData,setTableData] = useState<TableRow[]>([]);
   const [classroomsCount,setClassroomsCount] = useState({
     'amphi': 65,
     'class': 98
@@ -22,7 +24,7 @@ const Page = () => {
     // Fetch general stats
     const fetchGeneralStats = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/general-stats");
+        const res = await fetch(`${API_BASE_URL}/general-stats`);
         const data = await res.json();
 
         setGeneraleStats({
@@ -37,8 +39,8 @@ const Page = () => {
         data.classrooms_by_type.forEach((c: any) => {
           counts[c.type] = c.occupation_rate; // assuming original calculation
         });
-        console.log(counts)
-        setClassroomsCount(counts)
+        // console.log(counts)
+        setClassroomsCount(counts as { amphi: number; class: number })
       } catch (error) {
         console.error("Error fetching general stats:", error);
       }
@@ -47,7 +49,7 @@ const Page = () => {
     // Fetch student per group table
     const fetchStudentGroups = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/student-groups-stats");
+        const res = await fetch(`${API_BASE_URL}/student-groups-stats`);
         const data = await res.json();
         setTableData(data);
       } catch (error) {

@@ -5,7 +5,12 @@ import { StatCard } from '@/src/components/statistiques/StatCard'
 import { PieChart } from '@mui/x-charts'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from "@/src/context/AuthContext";
+import { API_BASE_URL } from '@/src/settings'
 
+export type TableRow = {
+  studentPerGroup: number;   // or string if it's a string
+  group_repetition: number;  // or string
+};
 
 const Page = () => {
     const { user } = useAuth();
@@ -15,7 +20,7 @@ const Page = () => {
       'formations': '0',
       'modules': '0'
   })
-  const [tableData,setTableData] = useState([]);
+  const [tableData,setTableData] = useState<TableRow[]>([]);
   const [classroomsCount,setClassroomsCount] = useState({
     'amphi': 65,
     'class': 98
@@ -25,7 +30,7 @@ const Page = () => {
     // Fetch general stats
     const fetchGeneralStats = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/general-stats?department_id="+user?.deptId);
+        const res = await fetch(`${API_BASE_URL}/general-stats?department_id=`+user?.deptId);
         const data = await res.json();
 
         setGeneraleStats({
@@ -41,7 +46,7 @@ const Page = () => {
           counts[c.type] = c.occupation_rate; // assuming original calculation
         });
         console.log(counts)
-        setClassroomsCount(counts)
+        setClassroomsCount(counts as { amphi: number; class: number })
       } catch (error) {
         console.error("Error fetching general stats:", error);
       }
@@ -50,7 +55,7 @@ const Page = () => {
     // Fetch student per group table
     const fetchStudentGroups = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/student-groups-stats?department_id="+user?.deptId);
+        const res = await fetch(`${API_BASE_URL}/student-groups-stats?department_id=`+user?.deptId);
         const data = await res.json();
         setTableData(data);
       } catch (error) {

@@ -4,6 +4,7 @@ import React, { use, useEffect, useState } from "react";
 import { Exam } from "../../../types/exam";
 import { User } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/src/settings";
 
 
 const examTimes = {
@@ -16,7 +17,7 @@ const examTimes = {
 
 const Page = () => {
   const userString = localStorage.getItem("user");
-  const user: User | null = userString ? JSON.parse(userString) : null;
+  const user = userString ? JSON.parse(userString) : null;
   const router = useRouter();
 
   useEffect(()=>{
@@ -24,13 +25,13 @@ const Page = () => {
     if(!isAuthorized) router.push("/Unauthorized")
   },[])
 
-  const [exams, setExams] = useState<Exam[]>([]);
+  const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/students/"+user?.groupId+"/ExamsSchedule")
+    fetch(`${API_BASE_URL}/students/`+user?.groupId+"/ExamsSchedule")
       .then((res) => res.json())
-      .then((data: Exam[]) => {setExams(data)})
+      .then((data) => {setExams(data)})
       .finally(() => setLoading(false));
       
   }, []);
@@ -41,10 +42,10 @@ const Page = () => {
   const dates = Array.from(new Set(exams.map((e) => e.date))).sort();
 
   // Helper to find exam by date and time
-  const getExamAt = (date: string, time: string) =>
+  const getExamAt = (date, time) =>
     exams.find((e) =>e.date == date && e.time == time)
 
-  const getFormatedDay = (date:string)=>{
+  const getFormatedDay = (date)=>{
     const d = new Date(date);
 
   const weekday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
@@ -78,7 +79,7 @@ const Page = () => {
           <tbody>
             {Object.keys(examTimes).map(key => (
               <tr key={key}>
-                <td className="border border-gray-300 px-4 py-2 font-semibold">{examTimes[key as keyof typeof examTimes]}</td>
+                <td className="border border-gray-300 px-4 py-2 font-semibold">{examTimes[key]}</td>
                 {dates.map((date) => {
                   const exam = getExamAt(date, key);
                   return (

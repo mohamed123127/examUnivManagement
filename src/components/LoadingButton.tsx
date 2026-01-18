@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import CircularWithValueLabel from "./CircularProgressWithLabel";
+import { API_BASE_URL } from "../settings";
 
 export default function LoadingButton() {
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ export default function LoadingButton() {
     setProgress(0);
 
     // Start the planification process
-    fetch("http://127.0.0.1:8000/StartPlanification")
+    fetch(`${API_BASE_URL}/StartPlanification`)
       .then((res) => res.json())
       .then((data) => {
         // console.log("Planification started:", data);
@@ -28,7 +29,7 @@ export default function LoadingButton() {
     if (!loading) return;
 
     const interval = setInterval(() => {
-      fetch("http://127.0.0.1:8000/PlanificationProgress") // your endpoint to get progress
+      fetch(`${API_BASE_URL}/PlanificationProgress`) // your endpoint to get progress
         .then((res) => res.json())
         .then((data) => {
           // assuming your endpoint returns { progress: 0-100 }

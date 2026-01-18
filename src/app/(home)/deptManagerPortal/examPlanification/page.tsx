@@ -4,6 +4,7 @@ import DataGrid, { Column } from '@/src/components/DataGrid/DataGrid'
 import React, { useEffect, useState } from 'react'
 import SearchArea from '../../examsManagerPortal/examPlanification/SearchArea';
 import { useAuth } from "@/src/context/AuthContext";
+import { API_BASE_URL } from '@/src/settings';
 
 
 export type FormationYear = {
@@ -29,8 +30,8 @@ const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter,setFilter] = useState({
     selectedDept : user?.deptId,
-    selectedFormation : '',
-    selectedYear : '',
+    selectedFormation : null,
+    selectedYear : null,
   });
 
 
@@ -39,7 +40,7 @@ const Page = () => {
   const params = new URLSearchParams();
 
   if (filter.selectedDept) {
-    params.append("department_id", filter.selectedDept);
+    params.append("department_id", String(filter.selectedDept));
   }
 
   if (filter.selectedYear) {
@@ -51,7 +52,7 @@ const Page = () => {
   }
 
   const query = params.toString();
-  const url = `http://127.0.0.1:8000/FormationYear/${currentPage}${query ? `?${query}` : ""}`;
+  const url = `${API_BASE_URL}/${currentPage}${query ? `?${query}` : ""}`;
 
   fetch(url)
     .then((res) => res.json())

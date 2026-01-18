@@ -6,6 +6,7 @@ import "dayjs/locale/fr";
 import Card from "./Card";
 import MultiSelectDropDownMenu from "../MultiSelectDropDownMenu";
 import { ExecException } from "child_process";
+import { API_BASE_URL } from "@/src/settings";
 
 
 
@@ -67,7 +68,7 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
   const [supervisions,setSupervisions] = useState<IdNameType[]>([]);
 
   useEffect(() => {
-      fetch(`http://127.0.0.1:8000/FormationYear/${formationYearId}/Modules`)
+      fetch(`${API_BASE_URL}/FormationYear/${formationYearId}/Modules`)
         .then(res => res.json())
         .then(data => {
           setModules(data)
@@ -78,7 +79,7 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
 
         const fetchExams = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/FormationYear/${formationYearId}/Exams`);
+        const res = await fetch(`${API_BASE_URL}/FormationYear/${formationYearId}/Exams`);
         if (!res.ok) throw new Error("Failed to fetch exams");
 
         const data: Exam[] = await res.json();
@@ -95,7 +96,7 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
     }, [formationYearId])
 
   useEffect(() => {
-      fetch(`http://127.0.0.1:8000/Classrooms?Date=${examForm.date}&Time=${selectedTime}`)
+      fetch(`${API_BASE_URL}/Classrooms?Date=${examForm.date}&Time=${selectedTime}`)
         .then(res => res.json())
         .then(data => {
           setClassrooms(data);

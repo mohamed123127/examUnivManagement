@@ -5,7 +5,12 @@ import { StatCard } from '@/src/components/statistiques/StatCard'
 import { PieChart } from '@mui/x-charts'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from "@/src/context/AuthContext";
+import { API_BASE_URL } from '@/src/settings'
 
+export type TableRow = {
+  exam_time: string;   // or string if it's a string
+  count: number;  // or string
+};
 
 const Page = () => {
     const { user } = useAuth();
@@ -15,13 +20,13 @@ const Page = () => {
       'sallesPerDay': '0',
       'avgSessionsPerProf': '0'
   })
-  const [tableData,setTableData] = useState([]);
+  const [tableData,setTableData] = useState<TableRow[]>([]);
   const [examPerDept, setExamPerDept] = useState<Array<{ department_id: number, examPerDept: number }>>([]);
 
   useEffect(() => {
     const fetchGeneralStats = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/exams-stats?department_id="+user?.deptId);
+        const res = await fetch(`${API_BASE_URL}/exams-stats?department_id=`+user?.deptId);
         const data = await res.json();
 
         setGeneraleStats({
@@ -38,7 +43,7 @@ const Page = () => {
 
     const fetchStudentGroups = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/most-used-hours?department_id="+user?.deptId);
+        const res = await fetch(`${API_BASE_URL}/most-used-hours?department_id=`+user?.deptId);
         const data = await res.json();
         setTableData(data);
       } catch (error) {
@@ -48,7 +53,7 @@ const Page = () => {
 
     const fetchExamPerDept = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/exam-per-department?department_id="+user?.deptId);
+        const res = await fetch(`${API_BASE_URL}/exam-per-department?department_id=`+user?.deptId);
         const data = await res.json();
         setExamPerDept(data);
         console.log(data)
