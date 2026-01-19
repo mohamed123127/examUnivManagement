@@ -90,6 +90,6 @@ def get_next_auto_increment(table_name):
             AND TABLE_NAME = :table_name
         """)
         result = db.execute(query, {"db_name": db_name, "table_name": table_name}).scalar()
-        return result
+        return result if result is not None else 0
     finally:
         db.close()
