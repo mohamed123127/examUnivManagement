@@ -36,7 +36,7 @@ def load_db_to_memory():
         fake_db["formation_year_modules"] = [{"id": fm.id, "formation_year_id": fm.formation_year_id, "module_id": fm.module_id} for fm in fymods]
 
         # GROUPS
-        groups = db.execute(text("SELECT id, group_number, formation_year_id FROM groups")).fetchall()
+        groups = db.execute(text("SELECT id, group_number, formation_year_id FROM `groups`")).fetchall()
         fake_db["groups"] = [{"id": g.id, "group_number": g.group_number, "formation_year_id": g.formation_year_id} for g in groups]
 
         # PROFESSORS
