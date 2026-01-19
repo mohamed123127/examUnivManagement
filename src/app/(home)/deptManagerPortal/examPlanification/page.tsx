@@ -57,7 +57,7 @@ const Page = () => {
   }
 
   const query = params.toString();
-  const url = `${API_BASE_URL}/${currentPage}${query ? `?${query}` : ""}`;
+  const url = `${API_BASE_URL}/FormationYear/${currentPage}${query ? `?${query}` : ""}`;
 
   fetch(url)
     .then((res) => res.json())
