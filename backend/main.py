@@ -29,7 +29,9 @@ origins = [
     "http://localhost:3000",  # frontend
     "http://127.0.0.1:3000",
     "https://exam-univ-management-r94ca0msg-louahchi-mohameds-projects.vercel.app",
-    "https://exam-univ-management-git-main-louahchi-mohameds-projects.vercel.app"
+    "https://exam-univ-management-git-main-louahchi-mohameds-projects.vercel.app",
+    "http://exam-univ-management-git-main-louahchi-mohameds-projects.vercel.app",
+    "http://exam-univ-management-r94ca0msg-louahchi-mohameds-projects.vercel.app"
 ]
 
 #solve issue of CORS
