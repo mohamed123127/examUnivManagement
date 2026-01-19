@@ -31,7 +31,8 @@ origins = [
     "https://exam-univ-management-r94ca0msg-louahchi-mohameds-projects.vercel.app",
     "https://exam-univ-management-git-main-louahchi-mohameds-projects.vercel.app",
     "http://exam-univ-management-git-main-louahchi-mohameds-projects.vercel.app",
-    "http://exam-univ-management-r94ca0msg-louahchi-mohameds-projects.vercel.app"
+    "http://exam-univ-management-r94ca0msg-louahchi-mohameds-projects.vercel.app",
+    "https://examunivmanagement.vercel.app"
 ]
 
 #solve issue of CORS
