@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/app/(home)/examsManagerPortal/examPlanification/SearchArea.jsx", "src/app/(home)/studentPortal/page.jsx", "src/components/DataGrid/DataGrid.jsx"  ],
+, "src/app/(home)/examsManagerPortal/examPlanification/SearchArea.jsx", "src/app/(home)/studentPortal/page.jsx", "src/components/DataGrid/DataGrid.jsx", "src/app/(home)/profPortal/page.jsx"  ],
   "exclude": ["node_modules"]
 }
