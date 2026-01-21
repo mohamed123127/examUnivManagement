@@ -44,10 +44,10 @@ const Page = () => {
   }
 
   const getFormatedDay = (date)=>{
-    const date = new Date(date);
+    const d = new Date(date);
 
-  const weekday = date.toLocaleDateString('fr-FR', { weekday: 'long' });
-  const dayMonthYear = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const weekday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
+  const dayMonthYear = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   
   return <>
