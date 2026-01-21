@@ -20,10 +20,8 @@ from services.ExamPlannerService import ExamPlanner
 from helpers.statistiquesCalculator import getStatistiques
 from services.NotificationService import create_notification,get_all_notifications
 from services.NotificationCreate import NotificationCreate
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
-app = FastAPI()
-app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+app = FastAPI(redirect_slashes=False)
 fake_db = load_db_to_memory()
 planner: ExamPlanner = ExamPlanner(fake_db)
 
