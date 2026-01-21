@@ -85,11 +85,11 @@ class LoginRequest(BaseModel):
 def login_endpoint(data: LoginRequest, db: Session = Depends(get_db)):
     return login(matricule=data.matricule, password=data.password, db=db)
 
-@app.get("/students/{group_id}/ExamsSchedule/")
+@app.get("/students/{group_id}/ExamsSchedule")
 def exams_endpoint(group_id, db: Session = Depends(get_db)):
     return StudentService.getExamsSchedule(group_id,db)
 
-@app.get("/profs/{prof_id}/ExamsSchedule/")
+@app.get("/profs/{prof_id}/ExamsSchedule")
 def exams_endpoint(prof_id, db: Session = Depends(get_db)):
     return ProfService.getExamsSchedule(prof_id,db)
 
