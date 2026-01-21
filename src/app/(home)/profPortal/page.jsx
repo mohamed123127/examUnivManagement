@@ -44,6 +44,7 @@ const Page = () => {
   }
 
   const getFormatedDay = (date)=>{
+    //to make sure that the date is a Date instance
     const d = new Date(date);
 
   const weekday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
