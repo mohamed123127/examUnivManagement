@@ -59,14 +59,15 @@ const Page = () => {
   const weekday = date.toLocaleDateString('fr-FR', { weekday: 'long' });
   const dayMonthYear = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  if (loading) return <p>Loading exams...</p>;
-
+  
   return <>
     {weekday}
     <br/>
     {dayMonthYear}
   </>;
 }
+
+if (loading) return <p>Loading exams...</p>;
 
   return (
     <div className="flex flex-col  p-4 items-center h-screen">
