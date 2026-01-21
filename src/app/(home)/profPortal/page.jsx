@@ -43,19 +43,22 @@ const Page = () => {
     return exams.find((e) => e.date == date && e.time == time)
   }
 
-  const getFormatedDay = (date)=>{
-    const d = new Date(date);
+  const getFormatedDay = (date) => {
+  if (!date) return "Invalid date";
+
+  const d = new Date(date + "T00:00:00");
+
+  if (isNaN(d.getTime())) return "Invalid date";
 
   const weekday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
   const dayMonthYear = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  
   return <>
-    {weekday}
-    <br/>
+    {weekday}<br/>
     {dayMonthYear}
   </>;
-}
+};
+
 
 if (loading) return <p>Loading exams...</p>;
 
