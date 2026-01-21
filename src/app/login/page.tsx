@@ -18,7 +18,6 @@ export default function LoginPage() {
 
     try {
       const user = await login(matricule, password);
-      // redirect حسب role بعد تحديث user في context
       switch (user?.role) {
         case "Étudiant":
           router.push("/studentPortal");
@@ -37,7 +36,7 @@ export default function LoginPage() {
           router.push("/profPortal");
           break;
         default:
-          router.push("/"); // fallback
+          router.push("/login");
       }
     } catch (err) {
       console.error(err);

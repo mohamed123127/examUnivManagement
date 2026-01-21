@@ -24,7 +24,6 @@ export const NotificationButton= () => {
   }, []);
   return (
     <div className="relative inline-block">
-      {/* أيقونة الجرس */}
       <button
         onClick={() => setOpen(!open)}
         className="relative p-2 rounded hover:bg-gray-200 focus:outline-none"
@@ -37,7 +36,6 @@ export const NotificationButton= () => {
         )}
       </button>
 
-      {/* قائمة الإشعارات */}
       {open && (
         <div className="absolute left-0 bottom-12 mt-2 w-64 bg-white shadow-lg border-2 border-black h-64 rounded-md z-50">
           {notifications.length === 0 ? (

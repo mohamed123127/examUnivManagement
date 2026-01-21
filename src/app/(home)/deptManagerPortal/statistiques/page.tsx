@@ -8,8 +8,8 @@ import { useAuth } from "@/src/context/AuthContext";
 import { API_BASE_URL } from '@/src/settings'
 
 export type TableRow = {
-  exam_time: string;   // or string if it's a string
-  count: number;  // or string
+  exam_time: string;
+  count: number;
 };
 
 const Page = () => {

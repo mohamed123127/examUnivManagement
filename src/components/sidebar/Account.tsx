@@ -30,9 +30,7 @@ export default function Account() {
       </div>
       <div className="mt-1">
         {user?.role == 'Administrateur examens' &&
-        <button>
                 <NotificationButton />
-        </button>
         }
 
         <button onClick={LogoutHandled}>

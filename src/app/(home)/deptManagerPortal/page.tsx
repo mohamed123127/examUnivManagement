@@ -8,8 +8,8 @@ import { useAuth } from "@/src/context/AuthContext";
 import { API_BASE_URL } from '@/src/settings'
 
 export type TableRow = {
-  studentPerGroup: number;   // or string if it's a string
-  group_repetition: number;  // or string
+  studentPerGroup: number; 
+  group_repetition: number;
 };
 
 const Page = () => {
@@ -43,7 +43,7 @@ const Page = () => {
         // Convert classroom list into object
         const counts: Record<string, number> = {};
         data.classrooms_by_type.forEach((c: any) => {
-          counts[c.type] = c.occupation_rate; // assuming original calculation
+          counts[c.type] = c.occupation_rate;
         });
         console.log(counts)
         setClassroomsCount(counts as { amphi: number; class: number })

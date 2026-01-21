@@ -113,10 +113,7 @@ const ExamSchedule: React.FC<ExamScheduleProps> = ({ formationYearId,totalGroups
         <tbody>
           {Object.keys(examTimes).map((time) => (
             <tr key={time}>
-              {/* Left column: time */}
               <td className="border p-2 bg-gray-100 font-semibold w-16">{examTimes[time]}</td>
-
-              {/* Empty cells for modules */}
               
               {modules?.map((module, key) => {
                 const selectedExam = Exams?.find(

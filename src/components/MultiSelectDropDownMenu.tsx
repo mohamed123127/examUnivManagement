@@ -32,7 +32,7 @@ const MultiSelectDropDownMenu = ({label,options,  setSelectedItems}: MultiSelect
   return (
     <div className="relative w-full">
 
-      {/* INPUT (no tags here anymore) */}
+      {/* INPUT */}
       <div
         className="border rounded p-2 flex items-center min-h-[40px] cursor-pointer"
         onClick={() => setOpen(o => !o)}
@@ -73,7 +73,6 @@ const MultiSelectDropDownMenu = ({label,options,  setSelectedItems}: MultiSelect
 )}
 
 
-      {/* ⭐ TAGS AREA ⭐ */}
       <div
         className={`flex flex-wrap gap-2 mt-3 border-2 rounded-lg p-3 h-24 ${
           selected.length === 0

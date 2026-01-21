@@ -29,10 +29,9 @@ export default function LoadingButton() {
     if (!loading) return;
 
     const interval = setInterval(() => {
-      fetch(`${API_BASE_URL}/PlanificationProgress`) // your endpoint to get progress
+      fetch(`${API_BASE_URL}/PlanificationProgress`)
         .then((res) => res.json())
         .then((data) => {
-          // assuming your endpoint returns { progress: 0-100 }
           setProgress(data.progress);
           setSeconds(prev => prev + 1)
           if (data.progress >= 100) {

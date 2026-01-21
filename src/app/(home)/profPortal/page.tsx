@@ -1,10 +1,17 @@
-"use client";
+'use client';
 
 import React, { use, useEffect, useState } from "react";
 import { User } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/src/settings";
 
+export interface Exam {
+  module_id: number;
+  module_name: string;
+  date: Date; 
+  time: string;
+  classroom: string;
+}
 
 const examTimes = {
   "08:30:00":"08:30", 
@@ -12,13 +19,6 @@ const examTimes = {
   "12:00:00":"12:00", 
   "13:45:00":"13:45", 
   "15:30:00":"15:30"
-};
-
-type Exam = {
-  date: Date;
-  time: string;
-  classroom: string;
-  module_name: string;
 };
 
 const Page = () => {
@@ -35,25 +35,31 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/profs/`+user?.id+"/ExamsSchedule")
+    fetch(API_BASE_URL+"/profs/"+user?.id+"/ExamsSchedule")
       .then((res) => res.json())
       .then((data: Exam[]) => {setExams(data);})
       .finally(() => setLoading(false));
       
   }, []);
 
-  if (loading) return <p>Loading exams...</p>;
 
   // Get unique dates
   const dates = Array.from(new Set(exams.map((e) => e.date))).sort();
 
   // Helper to find exam by date and time
-  const getExamAt = (date: string, time: string): Exam | undefined =>
-    exams.find((e) =>e.date.toISOString().split('T')[0] == date && e.time == time)
+  const getExamAt = (date: Date, time: string) =>{
+    return exams.find((e) => e.date == date && e.time == time)
+  }
 
-  const getFormatedDay = (d:Date)=>{
-  const weekday = d.toLocaleDateString('fr-FR', { weekday: 'long' });
-  const dayMonthYear = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const getFormatedDay = (date:Date)=>{
+    if (!(date instanceof Date)) {
+    date = new Date(date);
+  }
+
+  const weekday = date.toLocaleDateString('fr-FR', { weekday: 'long' });
+  const dayMonthYear = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  if (loading) return <p>Loading exams...</p>;
 
   return <>
     {weekday}
@@ -71,8 +77,8 @@ const Page = () => {
           <thead>
             <tr className="bg-gray-200">
               <th className="border border-gray-300 px-4 py-2">Time</th>
-              {dates.map((date) => (
-                <th key={date.toISOString().split('T')[0]} className="border border-gray-300 px-4 py-2">
+              {dates.map((date,i) => (
+                <th key={i} className="border border-gray-300 px-4 py-2">
                   <>
                     { getFormatedDay(date)}
                   </>
@@ -85,7 +91,7 @@ const Page = () => {
               <tr key={key}>
                 <td className="border border-gray-300 px-4 py-2 font-semibold">{examTimes[key as keyof typeof examTimes]}</td>
                 {dates.map((date) => {
-                  const exam = getExamAt(date.toISOString().split('T')[0], key);
+                  const exam = getExamAt(date, key);
                   return (
                     <td key={date + key} className="border border-gray-300 px-2 py-2">
                       {exam ? (

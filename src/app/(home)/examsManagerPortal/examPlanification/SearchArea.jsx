@@ -11,7 +11,7 @@ const SearchArea = ({setFilter,isCanControlData=false,isItChefDept=false}) => {
     const [years,setYears] = useState()
     const { user } = useAuth();
 
-    async function fetchData() {
+    async function fetchData(endpoint) {
     const res = await fetch(`${API_BASE_URL}/${endpoint}`);
     if (!res.ok) throw new Error("Failed to fetch " + endpoint);
     return res.json();
@@ -31,6 +31,10 @@ const SearchArea = ({setFilter,isCanControlData=false,isItChefDept=false}) => {
         .then(setDepts)
         .catch(console.error);
     }, []);
+
+    useEffect(()=>{
+        console.log(years)
+    },[years])
 
     const AcceptHandled = async () => {
     await createNotification({
@@ -94,9 +98,9 @@ const SearchArea = ({setFilter,isCanControlData=false,isItChefDept=false}) => {
   setFilter(prev => ({ ...prev, selectedYear: e.target.value }));
 }}>
                     <option value="">Tous</option>
-                    {years?.map((dept, i) => (
-                        <option key={i} value={dept}>
-                        {dept}
+                    {years?.map((year, i) => (
+                        <option key={i} value={year}>
+                        {year}
                     </option>
                     ))}
                 </select>
