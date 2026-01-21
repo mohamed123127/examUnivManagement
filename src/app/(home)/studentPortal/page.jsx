@@ -29,7 +29,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/students/`+user?.groupId+"/ExamsSchedule/")
+    fetch(`${API_BASE_URL}/students/`+user?.groupId+"/ExamsSchedule")
       .then((res) => res.json())
       .then((data) => {setExams(data)})
       .finally(() => setLoading(false));
